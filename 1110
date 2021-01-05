@@ -1,0 +1,20 @@
+zero = "0"
+count = 0
+num_o = input()
+num = num_o
+def cycle(n, c):
+    num_n = int(n[0])+int(n[1])
+    num_n = str(num_n)
+    c += 1
+    if len(num_n) == 1:
+        return num_n, c
+    else:
+        return str(num_n[1]), c
+while True:
+    if len(num) == 1:
+        num = zero+num
+    num_c, count = cycle(num, count)
+    num = num[1]+num_c
+    if int(num) == int(num_o):
+        print(count)
+        break
