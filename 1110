@@ -18,3 +18,19 @@ while True:
     if int(num) == int(num_o):
         print(count)
         break
+
+---------------other code----------------
+
+N = int(input())
+n = N
+count = 0
+
+while True:
+    a = n//10
+    b = n%10
+    s = a+b
+    n = b*10+s%10
+    count += 1
+    if n == N:
+        print(count)
+        break
