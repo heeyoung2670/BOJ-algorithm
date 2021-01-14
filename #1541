@@ -1,0 +1,9 @@
+data = input().split('-')
+
+res = 0
+for i in data[0].split('+'):
+    res += int(i)
+for j in data[1:]:
+    for k in j.split('+'):
+        res -= int(k)
+print(res)
