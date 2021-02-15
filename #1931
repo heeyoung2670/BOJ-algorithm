@@ -1,3 +1,4 @@
+# 회의가 시작하는 시간을 기준으로 정렬, 끝나는 시간을 기준으로 정렬 -> sorting 2번
 import sys
 input = sys.stdin.readline
 
