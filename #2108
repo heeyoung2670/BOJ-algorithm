@@ -1,0 +1,24 @@
+from collections import Counter
+import sys
+
+input = sys.stdin.readline
+n = int(input())
+data = []
+for _ in range(n):
+    data.append(int(input()))
+data.sort()
+# 산술평균 출력
+print(round(sum(data)/n))
+# 중앙값 출력
+print(data[n//2])
+# 최빈값 출력
+cnt = Counter(data).most_common()
+if len(data) > 1:
+    if cnt[0][1] == cnt[1][1]:
+        print(cnt[1][0])
+    else:
+        print(cnt[0][0])
+else:
+    print(cnt[0][0])
+# 범위 출력(최댓값과 최솟값의 차이)
+print(max(data) - min(data))
