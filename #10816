@@ -1,0 +1,19 @@
+import sys
+input = sys.stdin.readline
+
+n = int(input())
+data = list(map(int, input().split()))
+m = int(input())
+numbers = list(map(int, input().split()))
+
+d = dict()
+for i in data:
+    try:
+        d[i] += 1
+    except:
+        d[i] = 1
+for num in numbers:
+    try:
+        print(d[num], end=' ')
+    except:
+        print(0, end=' ')
