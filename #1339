@@ -1,0 +1,24 @@
+# 단어 수학
+import sys
+input = sys.stdin.readline
+
+N = int(input())
+words = []
+for _ in range(N):
+    words.append(input().rstrip())
+word_dict = {}
+for word in words:
+    word_len = len(word) - 1
+    for i in word:
+        if i in word_dict:
+            word_dict[i] += pow(10, word_len)
+        else:
+            word_dict[i] = pow(10, word_len)
+        word_len -= 1
+word_dict = sorted(word_dict.items(), key= lambda x : x[1], reverse=True)
+num = 0
+cnt = 9
+for i, j in word_dict:
+    num += j*cnt
+    cnt -= 1
+print(num)
