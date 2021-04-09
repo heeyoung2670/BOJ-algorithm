@@ -1,0 +1,19 @@
+# 신입 사원
+import sys
+input = sys.stdin.readline
+
+T = int(input())
+for _ in range(T):
+    rank = []
+    N = int(input())
+    for _ in range(N):
+        a, b = map(int, input().split())
+        rank.append((a, b))
+    rank.sort(key=lambda m: m[0])
+    cnt = 1
+    rank_norm = rank[0][1]
+    for i in range(1, N):
+        if rank[i][1] < rank_norm:
+            cnt += 1
+            rank_norm = rank[i][1]
+    print(cnt)
