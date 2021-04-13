@@ -1,0 +1,52 @@
+# 연구소
+# select_wall은 완전탐색, virus는 bfs
+# python은 시간초과 pypy로 겨우 성공
+import sys, copy
+from collections import deque
+input = sys.stdin.readline
+
+n, m = map(int, input().split())
+virus = []
+for i in range(n):
+    virus.append(list(map(int, input().split())))
+
+dx = [-1, 1, 0, 0]
+dy = [0, 0, -1, 1]
+
+max_clean = 0
+def select_wall(count):
+    global max_clean
+    if count == 3:
+        select = copy.deepcopy(virus)
+        for x in range(n):
+            for y in range(m):
+                bfs(x, y, select)
+        clean_cnt = sum(i.count(0) for i in select)
+        max_clean = max(max_clean, clean_cnt)
+        return
+    else:
+        for x in range(n):
+            for y in range(m):
+                if virus[x][y] == 0:
+                    virus[x][y] = 1
+                    select_wall(count + 1)
+                    virus[x][y] = 0
+
+def bfs(x, y, select):
+    queue = deque()
+    queue.append((x, y))
+    while queue:
+        x, y = queue.popleft()
+        if select[x][y] == 2:
+            for i in range(4):
+                nx = x + dx[i]
+                ny = y + dy[i]
+                if nx < 0 or nx >= n or ny < 0 or ny >= m:
+                    continue
+                if select[nx][ny] == 1 or select[nx][ny] == 2:
+                    continue
+                if select[nx][ny] == 0:
+                    select[nx][ny] = 2
+                    queue.append((nx, ny))
+select_wall(0)
+print(max_clean)
