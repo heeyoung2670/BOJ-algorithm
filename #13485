@@ -1,0 +1,19 @@
+# 시험 감독
+# while문으로 돌리면 시간초과
+# 수학적 접근으로 
+import sys
+input = sys.stdin.readline
+
+N = int(input())
+persons = list(map(int, input().split()))
+B, C = map(int, input().split()) # 총감독관, 부감독관이 한 시험장에서 감시할 수 있는 응시자 수 = B, C
+
+count = 0
+for person in persons:
+    person -= B
+    count += 1
+    if person > 0 and person%C == 0:
+        count += person//C
+    elif person > 0 and person%C != 0:
+        count += 1 + person//C
+print(count)
