@@ -1,0 +1,16 @@
+# 덩치
+# 브루트포스, 이중 for으로 구현
+import sys
+input = sys.stdin.readline
+
+N = int(input())
+people = []
+for _ in range(N):
+    a, b = map(int, input().split())
+    people.append((a, b))
+for i in range(len(people)):
+    count = 1
+    for j in range(len(people)):
+        if people[i][0] < people[j][0] and people[i][1] < people[j][1]:
+            count += 1
+    print(count, end=' ')
