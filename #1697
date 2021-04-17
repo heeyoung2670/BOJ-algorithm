@@ -1,0 +1,27 @@
+# 숨바꼭질
+# 1차원적 bfs
+# count를 queue에 같이 append해서 흐른 시간을 알 수 있도록
+import sys
+from collections import deque
+input = sys.stdin.readline
+
+N, K = map(int, input().split())
+visited = [0] * 100001
+
+def bfs(x):
+    count = 0
+    queue = deque()
+    queue.append((x, count))
+    while queue:
+        x, count = queue.popleft()
+        if x == K:
+            return count
+        visited[x] = 1
+        dx = [-1, 1, x]
+        for i in range(3):
+            nx = x + dx[i]
+            if nx < 0 or nx > 100000:
+                continue
+            if visited[nx] == 0:
+                queue.append((nx, count+1))
+print(bfs(N))
