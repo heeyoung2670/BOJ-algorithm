@@ -1,0 +1,20 @@
+# 퇴사
+# 다이나믹 프로그래밍, 핵심은 뒤에서부터 가질 수 있는 큰 값을 계산
+import sys
+input = sys.stdin.readline
+
+N = int(input())
+day = []
+pay = []
+dp = [0] * (N+1)
+for i in range(N):
+    a, b = map(int, input().split())
+    day.append(a)
+    pay.append(b)
+    dp[i] = b
+for i in range(N-1, -1, -1):
+    if day[i] > N - i:
+        dp[i] = dp[i+1]
+    else:
+        dp[i] = max(dp[i+1], pay[i]+dp[i+day[i]])
+print(dp[0])
