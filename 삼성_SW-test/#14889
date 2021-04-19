@@ -1,0 +1,26 @@
+# 스타트와 링크
+# 브루트포스 + 조합문제
+# intertools 쓴 것보다 직접 combinations를 구현한 것이 채점에서 두배 오래걸림
+# from itertools import combinations
+def combinations(array, r):
+    for i in range(len(array)):
+        if r == 1:
+            yield [array[i]]
+        else:
+            for next in combinations(array[i+1:], r-1):
+                yield [array[i]] + next
+
+N = int(input())
+data = []
+for _ in range(N):
+    data.append(list(map(int, input().split())))
+
+choice = list(combinations(list(range(N)), N//2))
+res_min = 100
+for i in range(len(choice)//2):
+    res1, res2 = 0, 0
+    for j, k in zip(combinations(choice[i], 2), combinations(choice[len(choice)-1-i], 2)):
+        res1 += data[j[0]][j[1]] + data[j[1]][j[0]]
+        res2 += data[k[0]][k[1]] + data[k[1]][k[0]]
+    res_min = min(res_min, abs(res1 - res2))
+print(res_min)
