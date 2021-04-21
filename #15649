@@ -1,0 +1,20 @@
+# N과 M (1)
+# 백트래킹
+N, M = map(int, input().split())
+numbers = list(range(1, N+1))
+visited = [0]*N
+temp = []
+def dfs(m):
+    if m == 0:
+        print(*temp)
+        return
+    for i in range(N):
+        if visited[i] == 1:
+            continue
+        else:
+            temp.append(numbers[i])
+            visited[i] = 1
+            dfs(m-1)
+            visited[i] = 0
+            temp.pop()
+dfs(M)
