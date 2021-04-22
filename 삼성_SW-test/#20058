@@ -1,7 +1,7 @@
 # 마법사 상어와 파이어스톰
 # 파이썬 재귀는 1000번 제한이므로 sys.setrecursionlimit()를 해야함
 # pow 함수 대신 2**N도 동일한 의미
-# [i, j]를 90도 회전하면 [N-1-j][i]로 이동
+# [i, j]를 90도 회전하면 [j][N-1-i]로 이동
 # Python3은 시간초과 PyPy3 사용
 import sys
 sys.setrecursionlimit(10 ** 5)
