@@ -1,0 +1,70 @@
+# 마법사 상어와 파이어스톰
+# 파이썬 재귀는 1000번 제한이므로 sys.setrecursionlimit()를 해야함
+# pow 함수 대신 2**N도 동일한 의미
+# [i, j]를 90도 회전하면 [N-1-j][i]로 이동
+# Python3은 시간초과 PyPy3 사용
+import sys
+sys.setrecursionlimit(10 ** 5)
+
+N, Q = map(int, input().split())
+N_ = pow(2, N)
+ices = []
+for _ in range(N_):
+    ices.append(list(map(int, input().split())))
+level = list(map(int, input().split()))
+
+def rotate(arr, L_):
+    arr_rotate = [[0] * N_ for _ in range(N_)]
+    # 회전
+    for i in range(0, N_, L_):
+        for j in range(0, N_, L_):
+            for i_ in range(L_):
+                for j_ in range(L_):
+                    arr_rotate[i + j_][j + L_ - 1 - i_] = arr[i + i_][j + j_]
+    return arr_rotate
+
+dx = [-1, 1, 0, 0]
+dy = [0, 0, -1, 1]
+def melt():
+    arr_melt = []
+    for x in range(N_):
+        for y in range(N_):
+            cnt = 0
+            for i in range(4):
+                nx = x + dx[i]
+                ny = y + dy[i]
+                if 0 <= nx < N_ and 0 <= ny < N_:
+                    if ices[nx][ny] > 0: # 얼음이 있는 칸
+                        cnt += 1
+            if cnt < 3 and ices[x][y] > 0:
+                arr_melt.append((x, y))
+
+    for x, y in arr_melt:
+        ices[x][y] -= 1
+
+def dfs(r, c):
+    res = 1
+    ices[r][c] = 0 # 방문한 노드는 제거
+    for i in range(4):
+        nr = r + dx[i]
+        nc = c + dy[i]
+        if 0 <= nr < N_ and 0 <= nc < N_ and ices[nr][nc] > 0:
+            res += dfs(nr, nc)
+    return res
+
+# 단계
+for q in range(Q):
+    L_ = pow(2, level[q])
+    ices = rotate(ices, L_)
+    # 얼음 제거
+    melt()
+
+# 남은 얼음 수 출력
+print(sum(sum(ice) for ice in ices))
+# 제일 큰 덩어리 출력
+ans = 0
+for r in range(N_):
+    for c in range(N_):
+        if ices[r][c] > 0:
+            ans = max(ans, dfs(r, c))
+print(ans)
