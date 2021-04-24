@@ -1,0 +1,44 @@
+# 로봇 청소기
+# bfs 코드에 방향 추가, 왼쪽부터 탐색 = 0->3->2->1 순서로 방향전환
+# visited 라는 새로운 배열 대신 방문한 노드를 2로 초기화
+# 4방향 모두 탐색하는 동안 이동할 수 있다면 queue.append 후 break
+from collections import deque
+
+N, M = map(int, input().split())
+r, c, d = map(int, input().split())
+graph = [list(map(int, input().split())) for _ in range(N)]
+
+dx = [-1, 0, 1, 0]
+dy = [0, 1, 0, -1]
+def bfs(r, c, d):
+    ans = 1
+    queue = deque()
+    queue.append((r, c, d))
+    graph[r][c] = 2
+    while queue:
+        r, c, d = queue.popleft()
+        d_ = d
+        for i in range(4):
+            d = (d + 3) % 4
+            nx = r + dx[d]
+            ny = c + dy[d]
+            if 0 <= nx < N and 0 <= ny < M and graph[nx][ny] == 0:
+                    queue.append((nx, ny, d))
+                    graph[nx][ny] = 2
+                    ans += 1
+                    break
+            elif i == 3: # 갈 방향이 없다면 후진
+                if d_ == 0:
+                    r += 1
+                elif d_ == 1:
+                    c -= 1
+                elif d_ == 2:
+                    r -= 1
+                elif d_ == 3:
+                    c += 1
+                if graph[r][c] == 1: # 후진도 할 수 없다면 청소기 종료
+                    return ans
+                else:
+                    queue.append((r, c, d))
+ans = bfs(r, c, d)
+print(ans)
