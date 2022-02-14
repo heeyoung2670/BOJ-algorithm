@@ -1,0 +1,103 @@
+// 최솟값과 최댓값
+// 인덱스 트리
+#pragma warning(disable:4996)
+
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+int N, M;
+int a, b;
+long long input;
+int treeIdx = 1;
+long long min_tree[400001] = {0, };
+long long max_tree[400001] = {0, };
+long long min_answer, max_answer;
+
+//자식 노드 중 작은 값을 현재 노드에 저장
+void min_update() {
+	for (int node = treeIdx - 1; node > 0; node--) {
+		min_tree[node] = min(min_tree[node * 2], min_tree[(node * 2) + 1]);
+	}
+}
+void  max_update() {
+	for (int node = treeIdx - 1; node > 0; node--) {
+		max_tree[node] = max(max_tree[node * 2], max_tree[(node * 2) + 1]);
+	}
+}
+
+//구간 내에서 작은 값 찾기
+long long min_get(int s, int e) {
+	long long ans = 1000000001;
+	while (s <= e)
+	{
+		if (s % 2 == 1) {
+			ans = min(ans, min_tree[s]);
+			s++;
+		}
+		if (e % 2 == 0) {
+			ans = min(ans, min_tree[e]);
+			e--;
+		}
+		s /= 2;
+		e /= 2;
+	}
+
+	return ans;
+}
+long long max_get(int s, int e) {
+	long long ans = 0;
+	while (s <= e)
+	{
+		if (s % 2 == 1) {
+			ans = max(ans, max_tree[s]);
+			s++;
+		}
+		if (e % 2 == 0) {
+			ans = max(ans, max_tree[e]);
+			e--;
+		}
+		s /= 2;
+		e /= 2;
+	}
+
+	return ans;
+}
+
+int main() {
+
+	scanf("%d %d", &N, &M);
+
+	//트리 시작 인덱스 구하기
+	while (true)
+	{
+		if (treeIdx >= N) break;
+		treeIdx *= 2;
+	}
+	
+	//입력
+	for (int i = 0; i < N; i++) {
+		
+		scanf("%lld", &input);
+		min_tree[treeIdx + i] = input;
+		max_tree[treeIdx + i] = input;
+	}
+
+	//트리 값 업데이트
+	min_update();
+	max_update();
+
+	//구현
+	for (int i = 0; i < M; i++) {
+		scanf("%d %d", &a, &b);
+
+		min_answer = min_get(treeIdx + a - 1, treeIdx + b - 1);
+		max_answer = max_get(treeIdx + a - 1, treeIdx + b - 1);
+
+		printf("%lld %lld\n", min_answer, max_answer);
+	}
+
+
+	return 0;
+}
