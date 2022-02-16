@@ -1,0 +1,69 @@
+// 스도쿠
+// 백트래킹
+#include <iostream>
+
+using namespace std;
+
+int map[10][10];
+bool check_row[10][10];
+bool check_col[10][10];
+bool check_square[10][10]; //전체 map에서 3x3 사각형씩 번호매김
+
+void backtracking(int cnt) {
+	if (cnt == 81) {
+		for (int i = 0; i < 9; i++) {
+			for (int j = 0; j < 9; j++) {
+				cout << map[i][j] << " ";
+			}
+			cout << "\n";
+		}
+		exit(0);
+	}
+
+	//가로줄부터 확인 -> 세로줄 이동
+	int x = cnt / 9;
+	int y = cnt % 9;
+
+	if (map[x][y] == 0) {
+		for (int i = 1; i <= 9; i++) {
+			if (!check_row[x][i] && !check_col[y][i] && !check_square[(x / 3) * 3 + (y / 3)][i]) {
+				check_row[x][i] = true;
+				check_col[y][i] = true;
+				check_square[(x / 3) * 3 + (y / 3)][i] = true;
+				map[x][y] = i;
+				backtracking(cnt + 1);
+				check_row[x][i] = false;
+				check_col[y][i] = false;
+				check_square[(x / 3) * 3 + (y / 3)][i] = false;
+				map[x][y] = 0;
+			}
+		}
+	}
+	else {
+		backtracking(cnt + 1);
+	}
+
+	return;
+	
+}
+
+int main() {
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+
+	for (int i = 0; i < 9; i++) {
+		for (int j = 0; j < 9; j++) {
+			cin >> map[i][j];
+			if(map[i][j] != 0) {
+				check_row[i][map[i][j]] = true; //a번째 열에 b라는 숫자는 이미 존재
+				check_col[j][map[i][j]] = true; //a번째 행에 b라는 숫자는 이미 존재
+				check_square[(i/3)*3 + (j/3)][map[i][j]] = true;
+			}
+		}
+	}
+
+	backtracking(0);
+
+	return 0;
+}
