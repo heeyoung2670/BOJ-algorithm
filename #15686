@@ -1,0 +1,78 @@
+// 치킨 배달
+//
+#include <iostream>
+#include <cmath>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int N, M;
+int map[51][51];
+vector<pair<int, int>> chicken;
+bool isVisited[14] = { false, };
+vector<pair<int, int>> house;
+int answer = 987654321;
+
+//거리 계산
+int calculate(int r1, int c1, int r2, int c2) {
+	return abs(r1 - r2) + abs(c1 - c2);
+}
+
+//도시의 치킨 거리 계산
+int distance() { 
+	int result = 0;
+	for (int i = 0; i < house.size(); i++) {
+		int temp = 987654321;
+		for (int j = 0; j < chicken.size(); j++) {
+			if (isVisited[j]) { //선택된 치킨집 중 가장 가까운 치킨집 확인
+				temp = min(temp, calculate(house[i].first, house[i].second, chicken[j].first, chicken[j].second));
+			}
+		}
+		result += temp;
+	}
+
+	return result;
+}
+
+void choice(int curr, int cnt) {
+	if (cnt == M) {
+		answer = min(answer, distance()); //치킨 거리 중 최솟값 반환
+		return;
+	}
+
+	//치킨집 선택 -> 조합
+	for (int i = curr; i < chicken.size(); i++) {
+		if (!isVisited[i]) {
+			isVisited[i] = true;
+			choice(i + 1, cnt + 1);
+			isVisited[i] = false;
+		}
+	}
+
+}
+
+int main() {
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+
+	cin >> N >> M;
+	for (int i = 1; i <= N; i++) {
+		for (int j = 1; j <= N; j++) {
+			cin >> map[i][j];
+			if (map[i][j] == 2) {
+				chicken.push_back(make_pair(i, j));
+			}
+			else if (map[i][j] == 1) {
+				house.push_back(make_pair(i, j));
+			}
+		}
+	}
+
+	choice(0, 0);
+
+	cout << answer << endl;
+
+	return 0;
+}
