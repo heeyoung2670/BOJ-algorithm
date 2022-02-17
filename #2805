@@ -1,0 +1,45 @@
+// 나무 자르기
+// 이분 탐색
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+int N, M; //나무의 수, 집으로 가져가려고 하는 나무의 길이
+int trees[1000001];
+int s = 0, e = 0, mid;
+
+int main() {
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+
+	cin >> N >> M;
+	for (int i = 0; i < N; i++) {
+		cin >> trees[i];
+		e = max(e, trees[i]); //나무의 가장 큰 값 저장
+	}
+
+	while (s +1 < e)
+	{
+		mid = s + (e - s) / 2;
+
+		long long temp = 0; //int로 지정하면 범위 벗어남
+		for (int i = 0; i < N; i++) {
+			if (trees[i] >= mid) {
+				temp += trees[i] - mid; //나무를 자르고 남은 나머지를 더한다.
+			}
+		}
+
+		if (temp >= M) {
+			s = mid;
+		}
+		else {
+			e = mid;
+		}
+	}
+
+	cout << s << "\n";
+
+	return 0;
+}
