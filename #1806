@@ -1,0 +1,54 @@
+// 부분합
+// 투포인터
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+#define MAX 100001
+
+int N, S;
+int nums[MAX];
+long long cumulated[MAX];
+int answer = MAX;
+
+int main() {
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+
+	cin >> N >> S;
+	for (int i = 0; i < N; i++) {
+		cin >> nums[i];
+	}
+
+	for (int i = 1; i <= N; i++) { //누적합
+		cumulated[i] = cumulated[i - 1] + nums[i - 1];
+	}
+
+	int left = 0, right = 1; //투포인터
+	while (left <= right && right <= N) //left와 right가 끝에 도달할 때까지 확인
+	{
+		if (cumulated[right] - cumulated[left] >= S) { //S 이상이 되는 부분합 중
+			answer = min(answer, right - left); //최소 길이 갱신
+			left++;
+		}
+		else {
+			if (right != N) { //아직 right가 끝에 도달하지 않았다면
+				right++; //right 이동
+			}
+			else { //right가 끝에 도달했다면 left 이동
+				left++;
+			}
+		}
+	}
+
+	if (answer == MAX) {
+		cout << 0 << "\n";
+	}
+	else {
+		cout << answer << "\n";
+	}
+
+	return 0;
+}
