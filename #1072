@@ -1,0 +1,41 @@
+// 게임
+// 이분 탐색
+#include <iostream>
+
+using namespace std;
+
+long long x, y;
+long long z, new_z;
+int s = 0, e = 1000000000, mid;
+
+int main() {
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+
+	cin >> x >> y; //게임 횟수, 이긴 게임 횟수
+
+	z = y * 100 / x; //승률
+
+	if (z >= 99) { //승률이 이미 99%라면 몇 판을 이겨도 100%가 될 수 없다.
+		cout << -1 << "\n";
+	}
+	else {
+		while (s + 1 < e)
+		{
+			mid = s + (e - s) / 2;
+
+			new_z = (y + mid) * 100 / (x + mid);
+
+			if (new_z <= z) {
+				s = mid;
+			}
+			else {
+				e = mid;
+			}
+		}
+		cout << e << "\n";
+	}
+
+	return 0;
+}
