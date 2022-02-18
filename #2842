@@ -1,0 +1,116 @@
+// 집배원 한상덕
+// 투포인터, 그래프 탐색
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <cstring>
+#include <algorithm>
+
+using namespace std;
+
+int N;
+char map[51][51];
+int height[51][51];
+bool visited[51][51];
+
+vector<int> v;
+int s_x, s_y;
+int max_h = 0, max_idx;
+int house;
+
+int answer = 987654321; //가장 높은 곳과 낮은 곳의 차이 = 피로도
+int l, r; //투포인터
+
+int dx[8] = {-1, 1, 0, 0, -1, 1, -1, 1};
+int dy[8] = {0, 0, -1, 1, -1, -1, 1, 1};
+
+bool bfs(int lb, int ub) {
+
+	if (height[s_x][s_y] < lb) return false; //우체국이 범위 내에 없는 경우 false 반환
+
+	queue<pair<int, int>> q;
+	q.push(make_pair(s_x, s_y));
+	visited[s_x][s_y] = true;
+
+	int temp = 0;
+	while (!q.empty())
+	{
+		int x = q.front().first;
+		int y = q.front().second;
+		q.pop();
+		if (map[x][y] == 'K') {
+			temp++;
+			if (temp == house) return true; //모든 집을 방문했다면 true 반환
+		}
+		for (int i = 0; i < 8; i++) {
+			int nx = x + dx[i];
+			int ny = y + dy[i];
+			if (0 <= nx && nx < N && 0 <= ny && ny < N) {
+				if (!visited[nx][ny] && lb <= height[nx][ny] && height[nx][ny] <= ub) {
+					visited[nx][ny] = true;
+					q.push(make_pair(nx, ny));
+				}
+			}
+		}
+	}
+
+	return false; //모든 집을 방문 못했을 경우 false 반환
+}
+
+int main() {
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+
+	//입력
+	cin >> N;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			cin >> map[i][j];
+			if (map[i][j] == 'P') { //우체국 위치 저장(시작점)
+				s_x = i;
+				s_y = j;
+			}
+			else if (map[i][j] == 'K') { //집의 개수
+				house++;
+			}
+		}
+	}
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			cin >> height[i][j];
+			v.push_back(height[i][j]);
+			if (map[i][j] == 'P' || map[i][j] == 'K') {
+				max_h = max(max_h, height[i][j]);
+			}
+		}
+	}
+
+	//벡터 중복 값 제거
+	//unique가 끝나면 vector의 쓰레기 값의 첫번째 위치 반환 -> erase
+	sort(v.begin(), v.end());
+	v.erase(unique(v.begin(), v.end()), v.end()); 
+
+	for (int i = 0; i < v.size(); i++)
+	{
+		if (v[i] == max_h) max_idx = i; //집이나 우체국은 무조건 방문해야 함 -> 벡터 index 값 저장
+	}
+	
+	l = 0, r = max_idx; 
+	while (l <= r && r < v.size())
+	{
+		memset(visited, false, sizeof(visited));
+		if (bfs(v[l], v[r])) { //집을 모두 방문 가능하다면
+			answer = min(answer, v[r] - v[l]); //최소 피로도 저장
+			l++;
+		}
+		else {
+			r++;
+		}
+	}
+
+	//출력
+	cout << answer << "\n";
+
+	return 0;
+}
