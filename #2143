@@ -1,0 +1,72 @@
+//두 배열의 합
+//누적합, 이분 탐색
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int T;
+int n, m;
+int A[1001];
+int B[1001];
+long long answer = 0;
+
+vector<int> v, w; //모든 누적합을 미리 구해놓기 위함
+
+int main() {
+
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+
+	//입력
+	cin >> T;
+	cin >> n;
+	for (int i = 0; i < n; i++) {
+		cin >> A[i];
+	}
+	cin >> m;
+	for (int i = 0; i < m; i++) {
+		cin >> B[i];
+	}
+
+	//부분합 구하기
+	for (int i = 0; i < n; i++) {
+		int sum = A[i];
+		v.push_back(sum);
+		for (int j = i + 1; j < n; j++) {
+			sum += A[j];
+			v.push_back(sum);
+		}
+	}
+	for (int i = 0; i < m; i++) {
+		int sum = B[i];
+		w.push_back(sum);
+		for (int j = i + 1; j < m; j++) {
+			sum += B[j];
+			w.push_back(sum);
+		}
+	}
+
+	//정렬
+	sort(v.begin(), v.end());
+	sort(w.begin(), w.end());
+
+	for (int i = 0; i < v.size(); i++) {
+		
+		int diff = T - v[i];
+
+		//찾으려는 key 값보다 같거나 큰 숫자가 배열 몇 번째에 등장하는지
+		//반환형은 Iterator이므로 첫번째 주소를 가르키는 벡터를 빼줌
+		int lb = lower_bound(w.begin(), w.end(), diff) - w.begin();
+		//찾으려는 key 값을 초과하는 숫자가 배열 몇 번째에 등장하는지
+		int ub = upper_bound(w.begin(), w.end(), diff) - w.begin();
+
+		answer += ub - lb;
+
+	}
+
+	printf("%lld\n", answer);
+
+	return 0;
+}
