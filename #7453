@@ -1,0 +1,49 @@
+//합이 0인 네 정수
+//정렬, 이분탐색
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int n;
+int nums[4][4001];
+long long answer;
+vector<int> AB;
+vector<int> CD;
+
+int main() {
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+
+	cin >> n;
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < 4; j++) {
+			cin >> nums[j][i];
+		}
+	}
+
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			AB.push_back(nums[0][i] + nums[1][j]);
+			CD.push_back(nums[2][i] + nums[3][j]);
+		}
+	}
+
+	sort(AB.begin(), AB.end());
+	sort(CD.begin(), CD.end());
+
+	for (int i = 0; i < AB.size(); i++) {
+
+		int target = -AB[i];
+		
+		int lb = lower_bound(CD.begin(), CD.end(), target) - CD.begin();
+		int ub = upper_bound(CD.begin(), CD.end(), target) - CD.begin();
+
+		answer += ub - lb;
+	}
+
+	printf("%lld\n", answer);
+
+	return 0;
+}
