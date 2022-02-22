@@ -1,0 +1,41 @@
+//최솟값 찾기
+//덱 자료구조
+#include<iostream>
+#include<deque> //앞과 뒤 모두 삽입, 삭제 가능 자료구조
+
+using namespace std;
+
+int N, L;
+int nums[5000001];
+deque<pair<int,int>> dq; //배열의 값, 배열의 인덱스
+
+int main() {
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+
+	cin >> N >> L;
+	for (int i = 0; i < N; i++) {
+		cin >> nums[i];
+	}
+	
+	for (int i = 0; i < N; i++) {
+
+		//현재 최솟값이 i-L+1과 i 사이의 범위에 들어있는지 확인
+		if (!dq.empty() && dq.front().second <= i - L) {
+			dq.pop_front();
+		}
+
+		//deque에는 최솟값 후보만 남김
+		while (!dq.empty() && dq.back().first > nums[i])
+		{
+			dq.pop_back();
+		}
+
+		dq.push_back(make_pair(nums[i], i));
+
+		printf("%d ", dq.front().first);
+	}
+	printf("\n");
+
+	return 0;
+}
