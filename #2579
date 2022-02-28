@@ -1,0 +1,34 @@
+// 계단 오르기
+// dp
+#include <iostream>
+#include <cstring>
+#include <algorithm>
+
+using namespace std;
+
+int N;
+int stair[301];
+int dp[301];
+
+int main() {
+	scanf_s("%d", &N);
+
+	memset(dp, 0, sizeof(dp));
+	memset(stair, 0, sizeof(stair));
+
+	for (int i = 1; i <= N; i++) {
+		scanf_s("%d", &stair[i]);
+	}
+
+	dp[0] = 0;
+	dp[1] = stair[1];
+	dp[2] = stair[1] + stair[2];
+
+	for (int i = 3; i <= N; i++) {
+		dp[i] = max(dp[i - 3] + stair[i - 1], dp[i - 2]) + stair[i]; //max(한개 전 계단을 거쳐서 오는 경우, 두개 전 계단에서 바로 올라오는 경우)
+	}
+
+	printf("%d", dp[N]);
+
+	return 0;
+}
