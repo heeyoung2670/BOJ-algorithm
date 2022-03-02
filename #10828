@@ -1,0 +1,51 @@
+//스택
+//스택 STL 사용해보기
+#include <iostream>
+#include <string>
+#include <stack>
+
+using namespace std;
+
+int N;
+string cmd;
+stack<int> s;
+
+int main() {
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+
+	cin >> N;
+	while (N--)
+	{
+		cin >> cmd;
+		if (cmd == "push") {
+			int x;
+			cin >> x;
+			s.push(x);
+		}
+		else if (cmd == "pop") {
+			if (s.empty()) printf("-1\n");
+			else {
+				int x = s.top();
+				s.pop();
+				printf("%d\n", x);
+			}
+		}
+		else if (cmd == "size") {
+			printf("%d\n", s.size());
+		}
+		else if (cmd == "empty") {
+			if (s.empty()) printf("1\n");
+			else printf("0\n");
+		}
+		else if (cmd == "top") {
+			if (s.empty()) printf("-1\n");
+			else {
+				int x = s.top();
+				printf("%d\n", x);
+			}
+		}
+	}
+
+	return 0;
+}
