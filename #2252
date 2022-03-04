@@ -1,0 +1,60 @@
+//줄 세우기
+//위상 정렬 알고리즘 - 일부만 비교하기 때문에 학생 모두가 정렬될 필요은 없다.
+//따라서, 위상정렬을 통해 꼭 필요한 정렬만 할 수 있다.
+#include <iostream>
+#include <vector>
+#include <cstring>
+#include <queue>
+
+using namespace std;
+
+int N, M;
+int A, B;
+int indegree[32001];
+
+int main() {
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+
+	vector<int> v[32001];
+	queue<int> q;
+	queue<int> answer;
+
+	cin >> N >> M; //학생의 수, 키를 비교한 횟수
+
+	memset(indegree, 0, sizeof(indegree));
+
+	for (int i = 0; i < M; i++) {
+		cin >> A >> B;
+		v[A].push_back(B); //A가 B 앞에 서야한다.
+		indegree[B]++; //이 작업을 처리하기에 앞서, 우선적으로 처리해야할 작업의 개수
+	}
+
+	for (int i = 1; i <= N; i++) {
+		if (indegree[i] == 0) { //앞에 서는 학생이 아무도 없다면
+			answer.push(i);
+			q.push(i); //시작할 수 있는 위상
+		}
+	}
+
+	while (true)
+	{
+		if (q.empty()) break;
+		int x = q.front();
+		q.pop();
+		for (int i = 0; i < v[x].size(); i++) {
+			indegree[v[x].at(i)]--;
+			if (indegree[v[x].at(i)] == 0) { //우선적으로 처리해야할 작업이 없으면 해당 사건 처리
+				q.push(v[x].at(i));
+				answer.push(v[x].at(i));
+			}
+		}
+	}
+
+	for (int i = 0; i < N; i++) {
+		cout << answer.front() << " ";
+		answer.pop();
+	}
+
+	return 0;
+}
