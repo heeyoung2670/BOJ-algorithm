@@ -1,0 +1,88 @@
+//트리인가?
+//노드의 개수가 0개 이거나 루트를 제외한 모든 노드는 반드시 단 하나의 들어오는 간선이 존재한다.
+#include <iostream>
+#include <set>
+#include <vector>
+#include <map> //key(왼쪽), value(오른쪽)를 가지는 노드, '트리형태'
+#include <queue>
+
+using namespace std;
+
+int u, v;
+int k = 1;
+//문제에서 최대 간선의 개수가 주어지지 않았으므로 map 자료형 사용
+map<int, vector<int>> tree;
+map<int, int> inverse_tree;
+set<int> s;
+
+bool bfs() {
+	int root = 0;
+	
+	for (auto iter : s) {
+		if (root == 0 && inverse_tree[iter] == 0) root = iter; //들어오는 간선이 없는 노드를 root로 지정
+		else if (root != 0 && inverse_tree[iter] == 0) return false; //루트가 있는데 들어오는 간선이 없는 노드가 하나 더 존재 -> 트리X
+		else if (inverse_tree[iter] != 1) return false; //들어오는 간선이 여러 개인 경우 -> 트리X
+	}
+
+	if (root == 0) return false; //루트가 없다면 -> 트리X
+
+	queue <int> q;
+	map<int, int> visited; //방문한 노드인지 확인
+	
+	q.push(root);
+	visited[root] = 1;
+
+	while (!q.empty()) {
+		int x = q.front();
+		q.pop();
+		for (int i = 0; i < tree[x].size(); i++) {
+			int nx = tree[x][i];
+			if (visited[nx] == 1) return false; //이미 방문한 노드라면 -> 트리X
+			visited[nx] = 1;
+			q.push(nx);
+		}
+	}
+
+	return true;
+}
+
+int main() {
+
+	while (true)
+	{
+		cin >> u >> v;
+
+		if (u == -1 && v == -1) break;
+
+		if (u == 0 && v == 0) {
+
+			if (bfs() || s.size() == 0) {
+				cout << "Case " << k << " is a tree.\n";
+			}
+			else {
+				cout << "Case " << k << " is not a tree.\n";
+			}
+
+			k++;
+			
+			//테스트 케이스마다 초기화
+			for (auto iter : s) {
+				tree[iter].clear();
+			}
+			inverse_tree.clear();
+			s.clear();
+						
+			continue;
+		}
+
+		//set 자료형으로 중복 없이 노드를 저장
+		s.insert(u);
+		s.insert(v);
+		//간선 저장
+		tree[u].push_back(v);
+		//노드 별 들어오는 간선 개수 저장
+		inverse_tree[v]++;
+	}
+
+	return 0;
+}
