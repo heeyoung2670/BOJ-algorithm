@@ -1,0 +1,69 @@
+//네트워크 연결
+//크루스칼 알고리즘 - 가장 적은 비용으로 모든 노드를 연결하기 위해 사용
+#include <iostream>
+#include <queue>
+
+using namespace std;
+
+int n, m;
+int a, b, c;
+int parent[1001];
+
+struct Data {
+	int node1, node2, weight;
+	Data() {};
+	//구조체 생성자
+	Data(int node1, int node2, int weight) :node1(node1), node2(node2), weight(weight) {};
+
+	bool operator<(const Data d) const {
+		return weight > d.weight; //weight를 기준으로 오름차순 정렬
+	}
+};
+
+int find(int x) {
+	if (parent[x] == x) return x;
+	else parent[x] = find(parent[x]);
+}
+
+void uni(int x, int y) {
+	parent[find(x)] = find(y);
+}
+
+int main(int argc, char** argv) {
+
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+	
+	int cnt, answer;
+	priority_queue<Data> pq;
+
+	cin >> n >> m;
+	//부모노드를 자기 자신으로 초기화 -> union-find 알고리즘
+	for (int i = 0; i <= n; i++) {
+		parent[i] = i;
+	}
+
+	for (int i = 0; i < m; i++) {
+		cin >> a >> b >> c;
+		pq.push(Data(a, b, c));
+	}
+
+	cnt = 0;
+	answer = 0;
+
+	while (true)
+	{
+		if (cnt == n - 1) break; //간선이 n-1개가 되면 탐색 종료 -> 모든 컴퓨터 연결 완료
+		Data d = pq.top(); //우선순위 큐를 사용하여 비용이 적은 것부터 선택
+		pq.pop();
+		if (find(d.node1) != find(d.node2)) { //순환확인
+			uni(d.node1, d.node2); //순환이 없다면 두 노드를 합침
+			cnt++; //간선 + 1
+			answer += d.weight;
+		}
+	}
+
+	cout << answer;
+
+	return 0;
+}
