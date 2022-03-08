@@ -1,0 +1,43 @@
+//이진 검색 트리
+//루트 값보다 작은 값은 왼쪽 서브트리, 루트 값보다 큰 값은 오른쪽 서브트리
+//트리, 재귀, 분할 정복
+#include <iostream>
+
+using namespace std;
+
+int input;
+int n = 0, i;
+int arr[10001];
+
+//전위 순회는 루트->왼쪽->오른쪽 순으로 탐색하므로 start가 루트
+//이후 루트를 기준으로 왼쪽, 오른쪽 분할정복
+
+//후위 순회(왼쪽->오른쪽->루트)
+void post_order(int start, int end) {
+	if (start >= end) return;
+	
+	for (i = start + 1; i < end; i++) {
+		if (arr[start] < arr[i]) break;
+	}
+
+	post_order(start + 1, i); //왼쪽 서브트리 범위
+	post_order(i, end); //오른쪽 서브트리의 범위
+
+	cout << arr[start] << "\n";
+
+	return;
+}
+
+int main() {
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+
+	while (cin >> input)
+	{
+		arr[n++] = input;
+	}
+
+	post_order(0, n);
+
+	return 0;
+}
