@@ -1,0 +1,75 @@
+// 게임 개발
+// 위상 정렬 + dp
+#include <iostream>
+#include <vector>
+#include <cstring>
+#include <queue>
+#include <algorithm>
+
+using namespace std;
+
+int N;
+int num;
+int cost[501];
+vector<int> v[501];
+int indegree[501];
+int dp[501];
+
+int main() {
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+
+	cin >> N;
+
+	queue<int> q;
+
+	// 초기화
+	memset(indegree, 0, sizeof(indegree));
+	memset(dp, 0, sizeof(dp));
+	memset(cost, 0, sizeof(cost));
+	for (int i = 0; i <= N; i++) {
+		v[i].clear();
+	}
+
+	// 연결된 정점들과 진입차수 저장
+	for (int i = 1; i <= N; i++) {
+		cin >> cost[i]; //건물을 짓는데 걸리는 시간
+		while (true)
+		{
+			cin >> num;
+			if (num == -1) break;
+			v[num].push_back(i); //num을 지은 후 i를 지어야 함
+			indegree[i]++;
+		}		
+	}
+
+	// 시작 정점 queue에 저장
+	for (int i = 1; i <= N; i++) {
+		if (indegree[i] == 0) { //먼저 지어야 하는 건물이 없는 경우 -> 시작 가능
+			q.push(i);
+			dp[i] = cost[i];
+		}
+	}
+
+	int vi;
+	while (true)
+	{
+		if (q.empty()) break;
+		int x = q.front();
+		q.pop();
+		for (int i = 0; i < v[x].size(); i++) {
+			vi = v[x].at(i);
+			dp[vi] = max(dp[x] + cost[vi], dp[vi]);
+			indegree[vi]--;
+			if (indegree[vi] == 0) { //더이상 지어야 할 건물이 없다.
+				q.push(vi);
+			}
+		}
+	}
+
+	for (int i = 1; i <= N; i++) {
+		cout << dp[i] << endl;
+	}
+
+	return 0;
+}
