@@ -1,0 +1,48 @@
+//두 수의 합
+//투포인터
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+int n;
+int nums[100001] = {0, };
+int x;
+
+int main() {
+
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+
+	int answer = 0;
+
+	cin >> n;
+	for (int i = 0; i < n; i++) {
+		cin >> nums[i];
+	}
+	cin >> x;
+
+	sort(nums, nums + n);
+
+	int i = 0, j = n-1;
+	while (i < j)
+	{
+		if (nums[i] + nums[j] == x) {
+			answer++;
+			j--;
+			continue;
+		}
+
+		if (nums[i] + nums[j] > x) {
+			j--;
+		}
+		else {
+			i++;
+		}
+
+	}
+
+	printf("%d\n", answer);
+
+	return 0;
+}
