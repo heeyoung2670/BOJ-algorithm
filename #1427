@@ -1,0 +1,37 @@
+//소트인사이드
+//정렬
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+string s, answer = "";
+vector<char> v;
+
+bool cmp(char a, char b) {
+	return a > b; //내림차순 정렬
+}
+
+int main() {
+
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+
+	cin >> s;
+	for (int i = 0; i < s.length(); i++) {
+		v.push_back(s[i]);
+	}
+
+	sort(v.begin(), v.end(), cmp);
+
+	for (int i = 0; i < v.size(); i++) {
+		answer += v[i];
+	}
+
+	cout << stoi(answer) << "\n";
+
+	return 0;
+}
