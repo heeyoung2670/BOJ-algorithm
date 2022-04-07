@@ -1,0 +1,34 @@
+//시험 감독
+//수학
+#include <iostream>
+
+using namespace std;
+
+int N;
+int test[1000000]; //각 시험장의 응시자 수
+int B, C; //총감독관/부감독관이 감시할 수 있는 응시자 수
+long long answer;
+
+int main() {
+
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+
+	cin >> N;
+	for (int i = 0; i < N; i++) {
+		cin >> test[i];
+	}
+	cin >> B >> C;
+
+	answer += N; //총 감독관
+	for (int i = 0; i < N; i++) {
+		test[i] -= B;
+		if (test[i] <= 0) continue;
+		if(test[i]%C == 0) answer += test[i] / C;
+		else answer += test[i] / C + 1;
+	}
+
+	printf("%lld\n", answer);
+
+	return 0;
+}
