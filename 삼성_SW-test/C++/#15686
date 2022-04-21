@@ -1,0 +1,57 @@
+//치킨 배달
+//조합, bfs
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int N, M, num;
+vector<pair<int, int>> chicken;
+vector<pair<int, int>> house;
+vector<pair<int, int>> choice;
+int answer = 987654321;
+
+int cal(int r1, int c1, int r2, int c2) {
+	return abs(r1 - r2) + abs(c1 - c2);
+}
+
+void backtracking(int idx, int cnt) {
+	if (cnt == M) {
+		int add = 0;
+		for (int i = 0; i < house.size(); i++) {
+			int temp = 101;
+			for (int j = 0; j < choice.size(); j++) {
+				temp = min(temp, cal(house[i].first, house[i].second, choice[j].first, choice[j].second));
+			}
+			add += temp;
+		}
+		answer = min(answer, add);
+	}
+	for (int i = idx; i < chicken.size(); i++) {
+		choice.push_back({ chicken[i].first, chicken[i].second });
+		backtracking(i + 1, cnt + 1);
+		choice.pop_back();
+	}
+}
+
+int main() {
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+
+	cin >> N >> M;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			cin >> num;
+			if (num == 1) house.push_back({ i, j });
+			else if (num == 2) chicken.push_back({ i, j });
+		}
+	}
+	
+	backtracking(0, 0);
+
+	cout << answer << "\n";
+
+	return 0;
+}
