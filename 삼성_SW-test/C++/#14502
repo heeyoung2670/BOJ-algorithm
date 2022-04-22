@@ -1,0 +1,100 @@
+//연구소
+//구현, bfs, 백트래킹
+#include <iostream>
+#include <queue>
+#include <algorithm>
+#include <cstring>
+
+using namespace std;
+
+int N, M;
+int map[8][8];
+int choice[8][8];
+int answer = 0;
+
+int dx[4] = {-1, 1, 0, 0};
+int dy[4] = {0, 0, -1, 1};
+
+void bfs() { //바이러스 퍼짐
+
+	queue<pair<int, int>> q;
+
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			if (choice[i][j] == 2) q.push({ i, j }); //바이러스
+		}
+	}
+
+	while (!q.empty())
+	{
+		int x = q.front().first;
+		int y = q.front().second;
+		q.pop();
+		for (int i = 0; i < 4; i++) {
+			int nx = x + dx[i];
+			int ny = y + dy[i];
+			if (nx < 0 || nx >= N || ny < 0 || ny >= M || choice[nx][ny] == 1) continue;
+			if (choice[nx][ny] == 0) {
+				choice[nx][ny] = 2;
+				q.push({ nx, ny });
+			}
+		}
+	}
+
+	//안전 영역 계산
+	int temp = 0;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			if (choice[i][j] == 0) temp++;
+		}
+	}
+	answer = max(answer, temp);
+
+}
+
+void backtracking(int cnt) { //벽 위치 선택
+	if (cnt == 3) {
+		
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < M; j++) {
+				choice[i][j] = map[i][j]; //copy
+			}
+		}
+		
+		bfs();
+
+		return;
+	}
+
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			if (map[i][j] == 0) {
+				map[i][j] = 1;
+				backtracking(cnt + 1);
+				map[i][j] = 0;
+			}
+		}
+	}
+
+	return;
+}
+
+int main() {
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+
+	//입력
+	cin >> N >> M;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			cin >> map[i][j];
+		}
+	}
+	
+	backtracking(0);
+
+	cout << answer << "\n";
+
+	return 0;
+}
