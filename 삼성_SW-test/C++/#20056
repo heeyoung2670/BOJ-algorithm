@@ -1,0 +1,115 @@
+//마법사 상어와 파이어볼
+//구현
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+struct FireBall
+{
+	int m; int s; int d;
+};
+
+int N, M, K; //지도 크기, 파이어볼 개수, 명령 수
+int r, c, m, s, d; //x 좌표, y 좌표, 질량, 속력, 방향
+int answer = 0;
+
+int dx[8] = {-1, -1, 0, 1, 1, 1, 0, -1};
+int dy[8] = {0, 1, 1, 1, 0, -1, -1, -1};
+
+vector<FireBall> map[51][51];
+vector<FireBall> temp[51][51];
+
+//벡터 초기화 함수
+void init_map() {
+	for (int i = 0; i < 51; i++) {
+		for (int j = 0; j < 51; j++) {
+			map[i][j].clear();
+		}
+	}
+}
+void init_temp() {
+	for (int i = 0; i < 51; i++) {
+		for (int j = 0; j < 51; j++) {
+			temp[i][j].clear();
+		}
+	}
+}
+
+int main() {
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+
+	cin >> N >> M >> K;
+	for (int i = 0; i < M; i++) {
+		cin >> r >> c >> m >> s >> d;
+		map[r - 1][c - 1].push_back({ m, s, d });
+	}
+
+	while (K--)
+	{
+		//파이어볼 이동
+		init_temp();
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) {
+				for (int k = 0; k < map[i][j].size(); k++) {
+					FireBall f = map[i][j][k];
+					//런타임 에러 방지를 위해 최대 속력 * N을 더해줌
+					temp[((i + dx[f.d] * f.s) + 1000 * N) % N][((j + dy[f.d] * f.s) + 1000 * N) % N].push_back({ f.m, f.s, f.d });
+				}
+			}
+		}
+
+		//두개 이상의 파이어볼 구현
+		init_map();
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) {
+				if (temp[i][j].size() >= 2) {
+					int sum_m = 0, sum_s = 0;
+					bool odd = false, even = false;
+					bool check = true;
+					for (int k = 0; k < temp[i][j].size(); k++) { //합쳐진 파이어볼
+						sum_m += temp[i][j][k].m;
+						sum_s += temp[i][j][k].s;
+						if(temp[i][j][k].d % 2 == 1) odd = true;
+						else even = true;
+
+						if (odd && even) check = false;
+					}
+					sum_m /= 5;
+					sum_s /= temp[i][j].size();
+					if (sum_m == 0) continue; //질량이 0이면 소멸
+					if (check) { //모두 홀수이거나 모두 짝수인 경우
+						map[i][j].push_back({ sum_m, sum_s, 0 });
+						map[i][j].push_back({ sum_m, sum_s, 2 });
+						map[i][j].push_back({ sum_m, sum_s, 4 });
+						map[i][j].push_back({ sum_m, sum_s, 6 });
+					}
+					else {
+						map[i][j].push_back({ sum_m, sum_s, 1 });
+						map[i][j].push_back({ sum_m, sum_s, 3 });
+						map[i][j].push_back({ sum_m, sum_s, 5 });
+						map[i][j].push_back({ sum_m, sum_s, 7 });
+					}
+				}
+				else if (temp[i][j].size() == 1) { //파이어볼이 한 개인 경우도 map배열에 다시 옮김
+					map[i][j].push_back({ temp[i][j][0].m, temp[i][j][0].s, temp[i][j][0].d });
+				}
+			}
+		}
+	}
+
+	//남아있는 파이어볼 질량의 합
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			for (int k = 0; k < map[i][j].size(); k++) {
+				answer += map[i][j][k].m;
+			}
+		}
+	}
+
+	cout << answer << "\n";
+
+	return 0;
+}
