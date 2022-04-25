@@ -1,0 +1,116 @@
+//게리맨더링 2
+//구현
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int N;
+int person[21][21];
+int map[21][21];
+int answer = 987654321;
+
+void calculate() {
+	int arr[5] = { 0, };
+
+	for (int i = 1; i <= N; i++) {
+		for (int j = 1; j <= N; j++) {
+			if (map[i][j] == 1) arr[0] += person[i][j];
+			else if (map[i][j] == 2) arr[1] += person[i][j];
+			else if (map[i][j] == 3) arr[2] += person[i][j];
+			else if (map[i][j] == 4) arr[3] += person[i][j];
+			else if (map[i][j] == 5) arr[4] += person[i][j];
+		}
+	}
+
+	sort(arr, arr + 5);
+	answer = min(answer, arr[4] - arr[0]);
+}
+
+void partition(int x, int y, int d1, int d2) {
+	for (int i = 1; i <= N; i++) {
+		for (int j = 1; j <= N; j++) {
+			map[i][j] = 5; //모두 5번 선거구로 초기화
+		}
+	}
+
+	//1번 선거구
+	int left = 0;
+	for (int i = 1; i < x + d1; i++) {
+		if (i >= x) left++;
+		for (int j = 1; j <= y - left; j++) {
+			map[i][j] = 1;
+		}
+	}
+
+	//2번 선거구
+	int right = 0;
+	for (int i = 1; i <= x + d2; i++) {
+		if (i > x) right++;
+		for (int j = y + 1 + right; j <= N; j++) {
+			map[i][j] = 2;
+		}
+	}
+
+	//3번 선거구
+	left = 0;
+	for (int i = N; i >= x + d1; i--) {
+		if (i < x + d1 + d2) left++;
+		for (int j = 1; j < y - d1 + d2 - left; j++) {
+			map[i][j] = 3;
+		}
+	}
+
+	//4번 선거구
+	right = 0;
+	for (int i = N; i > x + d2; i--) {
+		if (i <= x + d1 + d2) right++;
+		for (int j = y - d1 + d2 + right; j <= N; j++) {
+			map[i][j] = 4;
+		}
+	}
+
+	calculate();
+}
+
+bool check(int x, int y, int d1, int d2) {
+	
+	//꼭짓점 4개: (x, y), (x+d1, y-d2), (x+d1+d2, y-d1+d2), (x+d2, y+d2)
+
+	if (x + d1 > N || y - d1 <= 0) return false;
+	if (x + d2 > N || y + d2 > N) return false;
+	if (x + d1 + d2 > N || y - d1 + d2 <= 0 ||y - d1 + d2 > N ) return false;
+
+	return true;
+
+}
+
+int main() {
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+
+	cin >> N;
+	for (int i = 1; i <= N; i++) {
+		for (int j = 1; j <= N; j++) {
+			cin >> person[i][j];
+		}
+	}
+
+	for (int x = 1; x <= N - 2; x++) {
+		for (int y = 2; y <= N - 1; y++) {
+			for (int d1 = 1; d1 < y; d1++) {
+				for (int d2 = 1; d2 <= N - y; d2++) {
+					if (check(x, y, d1, d2)) { //해당 조합이 경계선을 나눌 수 있는지 체크
+						partition(x, y, d1, d2);
+					}
+				}
+			}
+		}
+	}
+
+	cout << answer << "\n";
+
+	return 0;
+}
