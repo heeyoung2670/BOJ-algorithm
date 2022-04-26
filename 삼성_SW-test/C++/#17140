@@ -1,0 +1,114 @@
+//이차원 배열과 연산
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+#include <algorithm>
+
+using namespace std;
+
+int r, c, k;
+int map[101][101];
+int colum, row;
+
+bool cmp(const pair<int, int>& a, const pair<int, int>& b) {
+	if (a.second == b.second) return a.first < b.first;
+	return a.second < b.second;
+}
+
+void operR() {
+	vector<vector<int>> result;
+	int new_row = 0;
+
+	for (int i = 1; i <= colum; i++) {
+		vector<int> res;
+
+		unordered_map<int, int> um; //key: number, value: count
+		for (int j = 1; j <= row; j++) {
+			if (map[i][j] == 0) continue; //0은 무시
+			um[map[i][j]]++; //해시로 수가 몇 번 나왔는지 확인
+		}
+		vector<pair<int, int>> v(um.begin(), um.end());
+		sort(v.begin(), v.end(), cmp); //등장 횟수가 커지는 순으로, 수가 커지는 순으로 정렬
+		
+		for (int k = 0; k < v.size(); k++) {
+			res.push_back(v[k].first);
+			res.push_back(v[k].second);
+		}
+
+		result.push_back(res);
+		new_row = max(new_row, (int)res.size()); //새로운 row 값 계산
+	}
+
+	//map에 정렬한 값을 다시 옮김
+	row = new_row;
+	for (int i = 0; i < colum; i++) {
+		for (int j = 0; j < min(row, 100); j++) {
+			if (j >= result[i].size()) map[i+1][j+1] = 0;
+			else map[i+1][j+1] = result[i][j];
+		}
+	}
+}
+
+void operC() {
+	vector<vector<int>> result;
+	int new_colum = 0;
+
+	for (int i = 1; i <= row; i++) {
+		vector<int> res;
+
+		unordered_map<int, int> um; //key: number, value: count
+		for (int j = 1; j <= colum; j++) {
+			if (map[j][i] == 0) continue;
+			um[map[j][i]]++;
+		}
+		vector<pair<int, int>> v(um.begin(), um.end());
+		sort(v.begin(), v.end(), cmp);
+
+		for (int k = 0; k < v.size(); k++) {
+			res.push_back(v[k].first);
+			res.push_back(v[k].second);
+		}
+
+		result.push_back(res);
+		new_colum = max(new_colum, (int)res.size());
+	}
+
+	colum = new_colum;
+	for (int i = 0; i < row; i++) {
+		for (int j = 0; j < min(colum, 100); j++) {
+			if (j >= result[i].size()) map[j + 1][i + 1] = 0;
+			else map[j + 1][i + 1] = result[i][j];
+		}
+	}
+}
+
+int main() {
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+
+	cin >> r >> c >> k;
+
+	colum = 3, row = 3;
+	for (int i = 1; i <= colum; i++) {
+		for (int j = 1; j <= row; j++) {
+			cin >> map[i][j];
+		}
+	}
+
+	int time = 0;
+	while (time <= 100)
+	{
+		if (map[r][c] == k) break;
+
+		time++;
+
+		if (colum >= row) operR(); //행의 개수 >= 열의 개수면 R 연산
+		else operC(); //C 연산
+	}
+
+	if (time > 100) cout << -1 << "\n"; //100초가 지나도 없다면 -1 출력
+	else cout << time << "\n";
+	
+	return 0;
+}
