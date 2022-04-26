@@ -1,0 +1,106 @@
+//미세먼지 안녕!
+//구현
+#include <iostream>
+#include <cstring>
+#include <vector>
+
+using namespace std;
+
+int dx[4] = { 0, -1, 0, 1 };
+int dy[4] = { 1, 0, -1, 0 };
+
+int R, C, T;
+int map[51][51];
+int dust[51][51];
+int answer = 0;
+
+vector<pair<int, int>> v;
+
+int main() {
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+
+	cin >> R >> C >> T;
+	for (int i = 0; i < R; i++) {
+		for (int j = 0; j < C; j++) {
+			cin >> map[i][j];
+			if (map[i][j] == -1) v.push_back({ i, j }); //공기청정기 위치 저장
+		}
+	}
+
+	while (T--)
+	{
+		//1. 미세먼지 확산
+		memset(dust, 0, sizeof(dust));
+		for (int i = 0; i < R; i++) {
+			for (int j = 0; j < C; j++) {
+				if (map[i][j] > 0) {
+					int cnt = 0;
+					for (int k = 0; k < 4; k++) {
+						int nx = i + dx[k];
+						int ny = j + dy[k];
+						if (nx < 0 || nx >= R || ny < 0 || ny >= C) continue; //칸을 벗어남
+						if (map[nx][ny] == -1) continue; //공기청정기 존재
+						dust[nx][ny] += map[i][j] / 5;
+						cnt++;
+					}
+					dust[i][j] += map[i][j] - (map[i][j] / 5)*cnt;
+				}
+			}
+		}
+
+		//map 배열을 미세먼지 확산한 후로 갱신
+		for (int i = 0; i < R; i++) {
+			for (int j = 0; j < C; j++) {
+				map[i][j] = dust[i][j];
+			}
+		}
+
+		//2. 공기청정기 작동
+		for (int i = 0; i < v.size(); i++) {
+			int dir = 0;
+			int x = v[i].first;
+			int y = v[i].second;
+			if (i == 0) { //위쪽 공기청정기
+				while (true){
+					map[x + dx[dir]][y + dy[dir]] = dust[x][y];
+					x += dx[dir];
+					y += dy[dir];
+					if (x == v[i].first && y == C - 1) dir++;
+					else if (x == 0 && y == C - 1) dir++;
+					else if (x == 0 && y == 0) dir++;
+					else if (x == v[i].first && y == 0) break;
+				}
+			}
+			else { //아래쪽 공기청정기
+				while (true){
+					map[x + dx[dir]][y + dy[dir]] = dust[x][y];
+					x += dx[dir];
+					y += dy[dir];
+					if (x == v[i].first && y == C - 1) dir = 3;
+					else if (x == R - 1 && y == C - 1) dir--;
+					else if (x == R - 1 && y == 0) dir--;
+					else if (x == v[i].first && y == 0) break;
+				}
+			}
+		}
+		
+		//공기청정기 다시 저장
+		for (int i = 0; i < v.size(); i++) {
+			map[v[i].first][v[i].second] = -1;
+		}
+	}
+
+	//남아있는 미세먼지 양 계산
+	for (int i = 0; i < R; i++) {
+		for (int j = 0; j < C; j++) {
+			if (map[i][j] == -1) continue;
+			answer += map[i][j];
+		}
+	}
+
+	cout << answer << "\n";
+
+	return 0;
+}
