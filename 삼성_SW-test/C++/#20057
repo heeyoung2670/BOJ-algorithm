@@ -1,0 +1,136 @@
+//마법사 상어와 토네이도
+//구현
+#include <iostream>
+
+using namespace std;
+
+int N; //N은 홀수
+int map[500][500] = {0, };
+bool visited[500][500] = {false, };
+int answer = 0;
+
+int dx[4] = {0, 1, 0, -1};
+int dy[4] = {-1, 0, 1, 0};
+
+int percent[5] = { 1, 2, 5, 7, 10 };
+
+bool check(int x, int y) {
+	if (x < 0 || y < 0 || x >= N || y >= N) return false;
+	return true;
+}
+
+void scatter(int x, int y, int dir) {
+	int sand = map[x][y];
+
+	int right = (dir + 3) % 4;
+	int left = (dir + 1) % 4;
+	int back = (dir + 2) % 4;
+
+	int scatter_sand = 0;
+	for (int i = 0; i < 5; i++) {
+		if (percent[i] == 1) { //1% 위치
+			scatter_sand += (sand * percent[i] / 100) * 2;
+
+			int nx = x + dx[back] + dx[right];
+			int ny = y + dy[back] + dy[right];
+			if (check(nx, ny)) map[nx][ny] += sand / 100;
+			else answer += sand / 100;
+			nx = x + dx[back] + dx[left];
+			ny = y + dy[back] + dy[left];
+			if (check(nx, ny)) map[nx][ny] += sand / 100;
+			else answer += sand / 100;
+		}
+		else if (percent[i] == 2) { //2% 위치
+			scatter_sand += (sand * percent[i] / 100) * 2;
+
+			int nx = x + dx[right]*2;
+			int ny = y + dy[right]*2;
+			if (check(nx, ny)) map[nx][ny] += sand * 2 / 100;
+			else answer += sand * 2 / 100;
+			nx = x + dx[left]*2;
+			ny = y + dy[left]*2;
+			if (check(nx, ny)) map[nx][ny] += sand * 2 / 100;
+			else answer += sand * 2 / 100;
+		}
+		else if (percent[i] == 5) { //5% 위치
+			scatter_sand += sand * percent[i] / 100;
+
+			int nx = x + dx[dir]*2;
+			int ny = y + dy[dir]*2;
+			if (check(nx, ny)) map[nx][ny] += sand * 5 / 100;
+			else answer += sand * 5 / 100;
+		}
+		else if (percent[i] == 7) { //7% 위치
+			scatter_sand += (sand * percent[i] / 100) * 2;
+
+			int nx = x + dx[right];
+			int ny = y + dy[right];
+			if (check(nx, ny)) map[nx][ny] += sand * 7 / 100;
+			else answer += sand * 7 / 100;
+			nx = x + dx[left];
+			ny = y + dy[left];
+			if (check(nx, ny)) map[nx][ny] += sand * 7 / 100;
+			else answer += sand * 7 / 100;
+		}
+		else if (percent[i] == 10) { //10% 위치
+			scatter_sand += (sand * percent[i] / 100) * 2;
+
+			int nx = x + dx[dir] + dx[right];
+			int ny = y + dy[dir] + dy[right];
+			if (check(nx, ny)) map[nx][ny] += sand / 10;
+			else answer += sand / 10;
+			nx = x + dx[dir] + dx[left];
+			ny = y + dy[dir] + dy[left];
+			if (check(nx, ny)) map[nx][ny] += sand / 10;
+			else answer += sand / 10;
+		}
+	}
+	
+	//알파 위치
+	int nx = x + dx[dir];
+	int ny = y + dy[dir];
+	if (check(nx, ny)) map[nx][ny] += sand - scatter_sand;
+	else answer += sand - scatter_sand;
+	
+	map[x][y] = 0; //y의 모든 모래 이동
+}
+
+int main() {
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+
+	cin >> N;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			cin >> map[i][j];
+		}
+	}
+
+	//시작 위치
+	int x = N / 2;
+	int y = N / 2;
+	int dir = 0;
+	visited[x][y] = true;
+	while (true)
+	{
+		if (x == 0 && y == 0) break;
+
+		//토네이도가 이동할 위치
+		int nx = x + dx[dir];
+		int ny = y + dy[dir];
+
+		scatter(nx, ny, dir); //흩날림
+		
+		//토네이도 이동
+		x = nx;
+		y = ny;
+		visited[x][y] = true;
+
+		if (!visited[x + dx[(dir + 1) % 4]][y + dy[(dir + 1) % 4]])	dir = (dir + 1) % 4;
+	}
+
+	cout << answer << "\n";
+
+	return 0;
+}
